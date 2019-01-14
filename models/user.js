@@ -14,7 +14,7 @@ const schema = new mongoose.Schema({
     type: String, required: true, }
 });
 
-userSchema.set('toJSON', {
+schema.set('toJSON', {
   virtuals: true,
   transform: (doc, result) => {
     delete result._id;
