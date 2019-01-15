@@ -7,7 +7,8 @@ const api = (function () {
       type: 'GET',
       url: path,
       dataType: 'json',
-      data: query
+      data: query,
+      headers: { 'Authorization': `Bearer ${store.authToken}`}
     });
   };
   const details = function (path) {
@@ -23,8 +24,9 @@ const api = (function () {
       url: path,
       contentType: 'application/json',
       dataType: 'json',
-      data: JSON.stringify(obj)
-    });
+      data: JSON.stringify(obj),
+      headers: { 'Authorization': `Bearer ${store.authToken}`
+      }});
   };
   const create = function (path, obj) {
     return $.ajax({
@@ -33,14 +35,16 @@ const api = (function () {
       contentType: 'application/json',
       dataType: 'json',
       processData: false,
-      data: JSON.stringify(obj)
+      data: JSON.stringify(obj),
+      headers: { 'Authorization': `Bearer ${store.authToken}`
     });
   };
   const remove = function (path) {
     return $.ajax({
       type: 'DELETE',
       dataType: 'json',
-      url: path
+      url: path,
+      headers: { 'Authorization': `Bearer ${store.authToken}`
     });
   };
   return {

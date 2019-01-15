@@ -17,13 +17,13 @@ const options = {
   session: false,
   failWithError: true
 };
-
+const jwtAuth = passport.authenticate('jwt', options);
 const localAuth = passport.authenticate('local', options);
 
-router.post('/login', localAuth, function (req, res) {
+router.post('/login', jwtAuth, (req, res) => {
   const authToken = createAuthToken(req.user);
+  console.log(authToken);
   return res.json({ authToken });
 });
-
 
 module.exports = router;

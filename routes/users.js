@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post('/users', (req, res, next) => {
   const { username, fullname, password } = req.body;
-
+console.log('users router post ran');
   if (!username) {
     const err = new Error ('Missing `username` in request body');
     err.status = 400;
