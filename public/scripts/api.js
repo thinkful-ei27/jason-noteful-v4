@@ -37,7 +37,7 @@ const api = (function () {
       processData: false,
       data: JSON.stringify(obj),
       headers: { 'Authorization': `Bearer ${store.authToken}`
-    });
+    }});
   };
   const remove = function (path) {
     return $.ajax({
@@ -45,7 +45,7 @@ const api = (function () {
       dataType: 'json',
       url: path,
       headers: { 'Authorization': `Bearer ${store.authToken}`
-    });
+    }});
   };
   return {
     create,

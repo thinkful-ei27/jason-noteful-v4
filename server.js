@@ -19,7 +19,7 @@ const usersRouter = require('./routes/users');
 // Create an Express application
 const app = express();
 
-//passport.use('local', localStrategy);
+passport.use('local', localStrategy);
 passport.use('jwt', jwtStrategy);
 
 // Log all requests. Skip logging during
