@@ -23,4 +23,9 @@ schema.set('toJSON', {
   }
 });
 
+schema.methods.validatePassword = function (incomingPassword) {
+  const user = this; // for clarity
+  return incomingPassword === user.password;
+};
+
 module.exports = mongoose.model('User', schema);
