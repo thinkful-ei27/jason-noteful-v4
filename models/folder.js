@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const schema = new mongoose.Schema({
   name: { type: String, required: true, unique: true }
 });
-//schema.index();
+schema.index({ name: 1, userid: 1 }, {unique: true});
 
 // Add `createdAt` and `updatedAt` fields
 schema.set('timestamps', true);
