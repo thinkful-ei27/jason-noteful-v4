@@ -19,8 +19,8 @@ const usersRouter = require('./routes/users');
 // Create an Express application
 const app = express();
 
-passport.use('local', localStrategy);
-passport.use('jwt', jwtStrategy);
+passport.use( localStrategy);
+passport.use( jwtStrategy);
 
 // Log all requests. Skip logging during
 app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common', {
@@ -48,6 +48,7 @@ app.use((req, res, next) => {
 
 // Custom Error Handler
 app.use((err, req, res, next) => {
+  console.log(err);
   if (err.status) {
     const errBody = Object.assign({}, err, { message: err.message });
     res.status(err.status).json(errBody);

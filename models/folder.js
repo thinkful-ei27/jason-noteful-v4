@@ -1,10 +1,12 @@
 'use strict';
 
+//const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
   name: { type: String, required: true, unique: true }
 });
+//schema.index();
 
 // Add `createdAt` and `updatedAt` fields
 schema.set('timestamps', true);
