@@ -5,7 +5,7 @@ const User = require('../models/user');
 const router = express.Router();
 
 router.post('/users', (req, res, next) => {
-  const { username, fullname, password='' } = req.body;
+  const { username, fullName, password } = req.body;
   console.log('users router post ran');
   const requiredFields = ['username', 'password'];
   const missingField = requiredFields.find(field =>!(field in req.body));
@@ -39,15 +39,14 @@ router.post('/users', (req, res, next) => {
     password: {min: 8, max: 72}
   };
 
-  const tooSmallField = Object.keys(sizedFields[field] &&
-    req.body[field].trim().length < sizedFields[field].min);
+  // const tooSmallField = Object.keys(sizedFields[field] && req.body[field].trim().length < sizedFields[field].min);
 
-  if (tooSmallField){
-    const min = sizedFields[tooSmallField].min;
-    const err = new Error(`Field: '${tooSmallField}' must be at least ${min} characters long.`);
-    err.status = 422;
-    return next(err);
-  }
+  // if (tooSmallField){
+  //   const min = sizedFields[tooSmallField].min;
+  //   const err = new Error(`Field: '${tooSmallField}' must be at least ${min} characters long.`);
+  //   err.status = 422;
+  //   return next(err);
+  // }
 
   const tooLargeField = Object.keys(sizedFields).find(
     field => 'max' in sizedFields[field] && 
@@ -59,14 +58,12 @@ router.post('/users', (req, res, next) => {
     err.status = 422;
     return next(err);
   }
-
-  fullName = fullName.trim();
   
   return User.hashPassword(password)
   .then(digest => {
     const newUser = {
       username,
-      fullname,
+      fullName: fullName.trim(),
       password:  digest
     };
 

@@ -122,7 +122,7 @@ const users = [
   {
     '_id': '333333333333333333333301',
     'fullName': 'Hob Bopkins',
-    'username':'Hobbop',
+    'username':'hobBop',
     'password':'$2a$10$QCJHiP1gSu1/frJLdBqiQOcEBT6MW7BN9vJqc7toE2RBR9HidzKi6'
   }
 ];

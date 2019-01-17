@@ -371,7 +371,7 @@ const noteful = (function () {
 
       const signupForm = $(event.currentTarget);
       const newUser = {
-        fullname: signupForm.find('.js-fullname-entry').val(),
+        fullName: signupForm.find('.js-fullname-entry').val(),
         username: signupForm.find('.js-username-entry').val(),
         password: signupForm.find('.js-password-entry').val()
       };

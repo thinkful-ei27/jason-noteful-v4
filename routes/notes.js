@@ -4,6 +4,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const Note = require('../models/note');
+const Folder = require('../models/folder');
+const Tag = require('../models/tag');
 
 const router = express.Router();
 
@@ -98,14 +100,27 @@ router.post('/', (req, res, next) => {
     delete newNote.folderId;
   }
 
-  Note.create(newNote)
-    .then(result => {
-      res.location(`${req.originalUrl}/${result.id}`).status(201).json(result);
+  return Folder.find({ userId })
+    .then(results => {
+      const marvin= results.filter(folder => folder.id === folderId);
+      console.log(marvin);
+      if (marvin.length === 0){
+        const err = new Error('Access to that folder is not authorized');
+        err.status = 401;
+        return next(err);
+      }
     })
+    .then(Note.create(newNote)
+      .then(result => {
+        res.location(`${req.originalUrl}/${result.id}`).status(201).json(result);
+      })
+      .catch(err => {
+        next(err);
+      }))
     .catch(err => {
       next(err);
     });
-});
+  });
 
 /* ========== PUT/UPDATE A SINGLE ITEM ========== */
 router.put('/:id', (req, res, next) => {
@@ -139,11 +154,20 @@ router.put('/:id', (req, res, next) => {
     err.status = 400;
     return next(err);
   }
-
-  if (toUpdate.tags) {
-    const badIds = toUpdate.tags.filter((tag) => !mongoose.Types.ObjectId.isValid(tag));
-    if (badIds.length) {
-      const err = new Error('The `tags` array contains an invalid `id`');
+  
+  if (toUpdate.tags === '') {
+    delete toUpdate.tags;
+    toUpdate.$unset = {tags: 1};
+  } else {
+    if (Array.isArray(toUpdate.tags)===true) {
+      const badTags = toUpdate.tags.filter((tag) => !mongoose.Types.ObjectId.isValid(tag));
+      if (badTags.length > 0) {
+        const err = new Error('The `tags` array contains an invalid `id`');
+        err.status = 400;
+        return next(err);
+      }
+    } else {
+      const err = new Error('tags must be an array');
       err.status = 400;
       return next(err);
     }
@@ -153,6 +177,34 @@ router.put('/:id', (req, res, next) => {
     delete toUpdate.folderId;
     toUpdate.$unset = {folderId : 1};
   }
+
+  toUpdate.tags.forEach(tag => {
+    Tag.find({tag})
+       .then(results => {
+         if (results.userId != userId) {
+           const err = new Error('unauthorized tag');
+           err.status = 400;
+           return next(err);
+         }})
+         .catch(err => {
+           next(err);
+         });
+  });
+
+  Folder.find({ userId })
+    .then(results => {
+      const allowedFolders= results.filter(folder =>  folder.id === folderId);
+      console.log(allowedFolders);
+      if (allowedFolders.length === 0){
+        const err = new Error('Access to that folder is not authorized');
+        err.status = 401;
+        return next(err);
+     }
+    })
+    .catch(err => {
+      next(err);
+    });
+  
   const filter = ({ _id: id, userId });
   Note.findOneAndUpdate(filter, toUpdate, { new: true })
     .then(result => {
