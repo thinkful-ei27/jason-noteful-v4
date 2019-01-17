@@ -5,7 +5,7 @@ const chaiHttp = require('chai-http');
 const mongoose = require('mongoose');
 const express = require('express');
 const sinon = require('sinon');
-
+const jwt = require('jsonwebtoken');
 const app = require('../server');
 const Folder = require('../models/folder');
 const Note = require('../models/note');
@@ -73,7 +73,7 @@ describe('Noteful API - Folders', function () {
     it('should return a list sorted by name with the correct fields and values', function () {
       return Promise.all([
         Folder.find().sort('name'),
-        chai.request(app).get('/api/folders')
+        chai.request(app).get('api/folders')
       ])
         .then(([data, res]) => {
           expect(res).to.have.status(200);
@@ -93,7 +93,7 @@ describe('Noteful API - Folders', function () {
 
     it('should catch errors and respond properly', function () {
       sandbox.stub(Folder.schema.options.toJSON, 'transform').throws('FakeError');
-      return chai.request(app).get('/api/folders')
+      return chai.request(app).get('api/folders')
         .then(res => {
           expect(res).to.have.status(500);
           expect(res).to.be.json;
@@ -137,7 +137,7 @@ describe('Noteful API - Folders', function () {
     it('should respond with a 404 for an id that does not exist', function () {
       // The string "DOESNOTEXIST" is 12 bytes which is a valid Mongo ObjectId
       return chai.request(app)
-        .get('/api/folders/DOESNOTEXIST')
+        .get('api/folders/DOESNOTEXIST')
         .then(res => {
           expect(res).to.have.status(404);
         });
@@ -150,7 +150,7 @@ describe('Noteful API - Folders', function () {
       return Folder.findOne()
         .then(_data => {
           data = _data;
-          return chai.request(app).get(`/api/folders/${data.id}`);
+          return chai.request(app).get(`api/folders/${data.id}`);
         })
         .then(res => {
           expect(res).to.have.status(500);
@@ -167,7 +167,7 @@ describe('Noteful API - Folders', function () {
       const newItem = { name: 'newFolder' };
       let body;
       return chai.request(app)
-        .post('/api/folders')
+        .post('api/folders')
         .send(newItem)
         .then(function (res) {
           body = res.body;
@@ -189,7 +189,7 @@ describe('Noteful API - Folders', function () {
     it('should return an error when missing "name" field', function () {
       const newItem = {};
       return chai.request(app)
-        .post('/api/folders')
+        .post('api/folders')
         .send(newItem)
         .then(res => {
           expect(res).to.have.status(400);
