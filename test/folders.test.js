@@ -9,7 +9,8 @@ const sinon = require('sinon');
 const app = require('../server');
 const Folder = require('../models/folder');
 const Note = require('../models/note');
-const { folders, notes } = require('../db/data');
+const User = require('../models/user');
+const { folders, notes, users } = require('../db/data');
 const { TEST_MONGODB_URI } = require('../config');
 
 chai.use(chaiHttp);
@@ -17,6 +18,8 @@ const expect = chai.expect;
 const sandbox = sinon.createSandbox();
 
 describe('Noteful API - Folders', function () {
+  let token;
+  let user;
 
   before(function () {
     return mongoose.connect(TEST_MONGODB_URI, { useNewUrlParser: true, useCreateIndex : true })
@@ -28,9 +31,14 @@ describe('Noteful API - Folders', function () {
 
   beforeEach(function () {
     return Promise.all([
+      User.insertMany(users),
       Folder.insertMany(folders),
       Note.insertMany(notes)
-    ]);
+    ])
+    .then(([users]) => {
+      user = users[0];
+      token = jwt.sign({ user }, JWT_SECRET, { subject: user.username });
+    });
   });
 
   afterEach(function () {
@@ -45,12 +53,14 @@ describe('Noteful API - Folders', function () {
     return mongoose.disconnect();
   });
   
-  describe('GET /api/folders', function () {
+  describe.only('GET /api/folders', function () {
 
     it('should return a list sorted with the correct number of folders', function () {
       return Promise.all([
         Folder.find().sort('name'),
-        chai.request(app).get('/api/folders')
+        chai.request(app)
+          .get('api/folders')
+          .set('Authorization', `Bearer ${token}`)
       ])
         .then(([data, res]) => {
           expect(res).to.have.status(200);
@@ -101,7 +111,7 @@ describe('Noteful API - Folders', function () {
       return Folder.findOne()
         .then(_data => {
           data = _data;
-          return chai.request(app).get(`/api/folders/${data.id}`);
+          return chai.request(app).get(`api/folders/${data.id}`);
         })
         .then((res) => {
           expect(res).to.have.status(200);
@@ -117,7 +127,7 @@ describe('Noteful API - Folders', function () {
 
     it('should respond with a 400 for an invalid id', function () {
       return chai.request(app)
-        .get('/api/folders/NOT-A-VALID-ID')
+        .get('api/folders/NOT-A-VALID-ID')
         .then(res => {
           expect(res).to.have.status(400);
           expect(res.body.message).to.equal('The `id` is not valid');
