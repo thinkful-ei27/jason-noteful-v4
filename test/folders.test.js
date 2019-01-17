@@ -149,7 +149,6 @@ describe('Noteful API - Folders', function () {
           expect(res.body.message).to.equal('Internal Server Error');
         });
     });
-
   });
 
   describe('POST /api/folders', function () {
@@ -231,7 +230,6 @@ describe('Noteful API - Folders', function () {
           expect(res.body.message).to.equal('Internal Server Error');
         });
     });
-
   });
 
   describe('PUT /api/folders/:id', function () {
@@ -409,7 +407,5 @@ describe('Noteful API - Folders', function () {
           expect(res.body.message).to.equal('Internal Server Error');
         });
     });
-
   });
-
 });
