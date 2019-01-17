@@ -24,6 +24,7 @@ describe('Noteful API - Folders', function () {
   before(function () {
     return mongoose.connect(TEST_MONGODB_URI, { useNewUrlParser: true, useCreateIndex : true })
       .then(() => Promise.all([
+        User.deleteMany(),
         Note.deleteMany(),
         Folder.deleteMany()
       ]));

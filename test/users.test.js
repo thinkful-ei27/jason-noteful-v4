@@ -35,7 +35,7 @@ describe('Noteful API - Users', function () {
     return mongoose.disconnect();
   });
 
-  describe('POST /api/users', function () {
+  describe('POST api/users', function () {
 
     it('Should create a new user', function () {
       let res;
