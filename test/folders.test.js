@@ -11,7 +11,7 @@ const Folder = require('../models/folder');
 const Note = require('../models/note');
 const User = require('../models/user');
 const { folders, notes, users } = require('../db/data');
-const { TEST_MONGODB_URI } = require('../config');
+const { JWT_SECRET, TEST_MONGODB_URI } = require('../config');
 
 chai.use(chaiHttp);
 const expect = chai.expect;

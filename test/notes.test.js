@@ -54,7 +54,7 @@ describe('Noteful API - Notes', function () {
     it('should return the correct number of Notes', function () {
       return Promise.all([
         Note.find(),
-        chai.request(app).get('/api/notes')
+        chai.request(app).get('api/notes')
       ])
         .then(([data, res]) => {
           expect(res).to.have.status(200);
@@ -67,7 +67,7 @@ describe('Noteful API - Notes', function () {
     it('should return a list sorted desc with the correct right fields', function () {
       return Promise.all([
         Note.find().sort({ updatedAt: 'desc' }),
-        chai.request(app).get('/api/notes')
+        chai.request(app).get('api/notes')
       ])
         .then(([data, res]) => {
           expect(res).to.have.status(200);
@@ -96,7 +96,7 @@ describe('Noteful API - Notes', function () {
         .sort({ updatedAt: 'desc' });
 
       const apiPromise = chai.request(app)
-        .get(`/api/notes?searchTerm=${searchTerm}`);
+        .get(`api/notes?searchTerm=${searchTerm}`);
 
       return Promise.all([dbPromise, apiPromise])
         .then(([data, res]) => {
@@ -122,7 +122,7 @@ describe('Noteful API - Notes', function () {
       const dbPromise = Note
         .find({ $or: [{ title: re }, { content: re }] })
         .sort({ updatedAt: 'desc' });
-      const apiPromise = chai.request(app).get(`/api/notes?searchTerm=${searchTerm}`);
+      const apiPromise = chai.request(app).get(`api/notes?searchTerm=${searchTerm}`);
 
       return Promise.all([dbPromise, apiPromise])
         .then(([data, res]) => {
@@ -149,7 +149,7 @@ describe('Noteful API - Notes', function () {
           data = _data;
           return Promise.all([
             Note.find({ folderId: data.id }),
-            chai.request(app).get(`/api/notes?folderId=${data.id}`)
+            chai.request(app).get(`api/notes?folderId=${data.id}`)
           ]);
         })
         .then(([data, res]) => {
@@ -167,7 +167,7 @@ describe('Noteful API - Notes', function () {
           data = _data;
           return Promise.all([
             Note.find({ tags: data.id }),
-            chai.request(app).get(`/api/notes?tagId=${data.id}`)
+            chai.request(app).get(`api/notes?tagId=${data.id}`)
           ]);
         })
         .then(([data, res]) => {
@@ -184,7 +184,7 @@ describe('Noteful API - Notes', function () {
       const dbPromise = Note.find({
         $or: [{ title: re }, { content: re }]
       }).sort({ updatedAt: 'desc' });
-      const apiPromise = chai.request(app).get(`/api/notes?searchTerm=${searchTerm}`);
+      const apiPromise = chai.request(app).get(`api/notes?searchTerm=${searchTerm}`);
       return Promise.all([dbPromise, apiPromise])
         .then(([data, res]) => {
           expect(res).to.have.status(200);
@@ -197,7 +197,7 @@ describe('Noteful API - Notes', function () {
     it('should catch errors and respond properly', function () {
       sandbox.stub(Note.schema.options.toJSON, 'transform').throws('FakeError');
 
-      return chai.request(app).get('/api/notes')
+      return chai.request(app).get('api/notes')
         .then(res => {
           expect(res).to.have.status(500);
           expect(res).to.be.json;
@@ -215,7 +215,7 @@ describe('Noteful API - Notes', function () {
       return Note.findOne()
         .then(_data => {
           data = _data;
-          return chai.request(app).get(`/api/notes/${data.id}`);
+          return chai.request(app).get(`api/notes/${data.id}`);
         })
         .then((res) => {
           expect(res).to.have.status(200);
@@ -233,7 +233,7 @@ describe('Noteful API - Notes', function () {
 
     it('should respond with status 400 and an error message when `id` is not valid', function () {
       return chai.request(app)
-        .get('/api/notes/NOT-A-VALID-ID')
+        .get('api/notes/NOT-A-VALID-ID')
         .then(res => {
           expect(res).to.have.status(400);
           expect(res.body.message).to.equal('The `id` is not valid');
@@ -243,7 +243,7 @@ describe('Noteful API - Notes', function () {
     it('should respond with a 404 for an id that does not exist', function () {
       // The string "DOESNOTEXIST" is 12 bytes which is a valid Mongo ObjectId
       return chai.request(app)
-        .get('/api/notes/DOESNOTEXIST')
+        .get('api/notes/DOESNOTEXIST')
         .then(res => {
           expect(res).to.have.status(404);
         });
@@ -253,7 +253,7 @@ describe('Noteful API - Notes', function () {
       sandbox.stub(Note.schema.options.toJSON, 'transform').throws('FakeError');
       return Note.findOne()
         .then(data => {
-          return chai.request(app).get(`/api/notes/${data.id}`);
+          return chai.request(app).get(`api/notes/${data.id}`);
         })
         .then(res => {
           expect(res).to.have.status(500);
@@ -274,7 +274,7 @@ describe('Noteful API - Notes', function () {
       };
       let res;
       return chai.request(app)
-        .post('/api/notes')
+        .post('api/notes')
         .send(newItem)
         .then(function (_res) {
           res = _res;
@@ -300,7 +300,7 @@ describe('Noteful API - Notes', function () {
       };
       let res;
       return chai.request(app)
-        .post('/api/notes')
+        .post('api/notes')
         .send(newItem)
         .then(function (_res) {
           res = _res;
