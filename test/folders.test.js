@@ -22,19 +22,17 @@ describe('Noteful API - Folders', function () {
   let user;
 
   before(function () {
-    return mongoose.connect(TEST_MONGODB_URI, { useNewUrlParser: true, useCreateIndex : true })
-      .then(() => Promise.all([
-        User.deleteMany(),
-        Note.deleteMany(),
-        Folder.deleteMany()
-      ]));
+    return mongoose
+    .connect(TEST_MONGODB_URI, { useNewUrlParser: true })
+      .then(() => mongoose.connection.db.dropDatabase());
   });
 
   beforeEach(function () {
     return Promise.all([
       User.insertMany(users),
       Folder.insertMany(folders),
-      Note.insertMany(notes)
+      Note.insertMany(notes),
+      Folder.createIndexes()
     ])
     .then(([users]) => {
       user = users[0];
