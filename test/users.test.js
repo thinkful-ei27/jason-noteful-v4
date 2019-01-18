@@ -20,7 +20,8 @@ describe('Noteful API - Users', function () {
 
   before(function () {
     return mongoose.connect(TEST_MONGODB_URI, { useNewUrlParser: true, useCreateIndex: true })
-    .then(() => User.deleteMany());
+    .then(() => mongoose.connection.db.dropDatabase())
+    //.then(() => User.deleteMany());
   });
 
   beforeEach(function () {
@@ -35,13 +36,13 @@ describe('Noteful API - Users', function () {
     return mongoose.disconnect();
   });
 
-  describe('POST api/users', function () {
+  describe('POST /api/users', function () {
 
     it('Should create a new user', function () {
       let res;
       return chai
         .request(app)
-        .post('api/users')
+        .post('/api/users')
         .send({ username, password, fullName})
         .then(_res => {
           res = _res;
@@ -68,7 +69,7 @@ describe('Noteful API - Users', function () {
       let res;
       return chai
         .request(app)
-        .post('api/users')
+        .post('/api/users')
         .send({ password, fullName })
         .then(res => {
           expect(res).to.have.status(422);
@@ -82,7 +83,7 @@ describe('Noteful API - Users', function () {
       let res;
       return chai
         .request(app)
-        .post('api/users')
+        .post('/api/users')
         .send({ username, fullName})
         .then(res => {
           expect(res).to.have.status(422);
@@ -96,7 +97,7 @@ describe('Noteful API - Users', function () {
       let res;
       return chai
         .request(app)
-        .post('api/users')
+        .post('/api/users')
         .send({
           username: 80085,
           fullName,
@@ -114,7 +115,7 @@ describe('Noteful API - Users', function () {
       let res;
       return chai
         .request(app)
-        .post('api/notes')
+        .post('/api/notes')
         .send({
           username,
           password: 55378008,
@@ -132,7 +133,7 @@ describe('Noteful API - Users', function () {
       let res;
       return chai
         .request(app)
-        .post('api/users')
+        .post('/api/users')
         .send({
           username,
           password,
@@ -149,7 +150,7 @@ describe('Noteful API - Users', function () {
     it('Should reject users with non-trimmed username', function () {
       return chai
         .request(app)
-        .post('api/users')
+        .post('/api/users')
         .send({
           username: ' exampleUser ',
           password,
@@ -166,7 +167,7 @@ describe('Noteful API - Users', function () {
     it('Should reject users with non-trimmed password', function () {
       return chai
         .request(app)
-        .post('api/users')
+        .post('/api/users')
         .send({
           username,
           password: ' examplePass ',
@@ -183,7 +184,7 @@ describe('Noteful API - Users', function () {
     it('Should reject users with empty username', function () {
       return chai
         .request(app)
-        .post('api/users')
+        .post('/api/users')
         .send({
           username: '',
           password,
@@ -200,7 +201,7 @@ describe('Noteful API - Users', function () {
     it('Should reject users with username less than 2 characters', function () {
       return chai
         .request(app)
-        .post('api/users')
+        .post('/api/users')
         .send({
           username: 'x',
           password,
@@ -217,7 +218,7 @@ describe('Noteful API - Users', function () {
     it('Should reject users with password less than 8 characters', function () {
       return chai
         .request(app)
-        .post('api/users')
+        .post('/api/users')
         .send({
           username,
           password: 'xampleP',
@@ -234,7 +235,7 @@ describe('Noteful API - Users', function () {
     it('Should reject users with password greater than 72 characters', function () {
       return chai
         .request(app)
-        .post('api/users')
+        .post('/api/users')
         .send({
           username,
           password: new Array[73].fill('z').join(''),
@@ -251,7 +252,7 @@ describe('Noteful API - Users', function () {
     it('Should reject users with duplicate username', function () {
       return chai
         .request(app)
-        .post('api/users')
+        .post('/api/users')
         .send({
           username,
           password,
@@ -260,7 +261,7 @@ describe('Noteful API - Users', function () {
         .then(() => {
           return chai
           .request(app)
-          .post('api/users')
+          .post('/api/users')
           .send({
             username,
             password,
@@ -276,7 +277,7 @@ describe('Noteful API - Users', function () {
     it('Should trim fullname', function () {
       return chai
         .request(app)
-        .post('api/users')
+        .post('/api/users')
         .send({
           username,
           password,

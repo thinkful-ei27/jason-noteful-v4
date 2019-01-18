@@ -100,23 +100,23 @@ router.post('/', (req, res, next) => {
     delete newNote.folderId;
   }
 
-  return Folder.find({ userId })
-    .then(results => {
-      const marvin= results.filter(folder => folder.id === folderId);
-      console.log(marvin);
-      if (marvin.length === 0){
-        const err = new Error('Access to that folder is not authorized');
-        err.status = 401;
-        return next(err);
-      }
-    })
-    .then(Note.create(newNote)
+  // return Folder.find({ userId })
+  //   .then(results => {
+  //     const okFolders= results.filter(folder => folder.id === folderId);
+  //     console.log(okFolders);
+  //     if (okFolders.length === 0){
+  //       const err = new Error('Access to that folder is not authorized');
+  //       err.status = 401;
+  //       return next(err);
+  //     }
+  //   })
+  Note.create(newNote)
       .then(result => {
         res.location(`${req.originalUrl}/${result.id}`).status(201).json(result);
       })
       .catch(err => {
         next(err);
-      }))
+      })
     .catch(err => {
       next(err);
     });
@@ -126,7 +126,6 @@ router.post('/', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
   const { id } = req.params;
   const userId = req.user.id;
-
   const toUpdate = {};
   const updateableFields = ['title', 'content', 'folderId', 'tags'];
 
@@ -155,56 +154,40 @@ router.put('/:id', (req, res, next) => {
     return next(err);
   }
   
-  if (toUpdate.tags === '') {
-    delete toUpdate.tags;
-    toUpdate.$unset = {tags: 1};
-  } else {
-    if (Array.isArray(toUpdate.tags)===true) {
+  if (toUpdate.tags) {
       const badTags = toUpdate.tags.filter((tag) => !mongoose.Types.ObjectId.isValid(tag));
       if (badTags.length > 0) {
         const err = new Error('The `tags` array contains an invalid `id`');
         err.status = 400;
         return next(err);
       }
-    } else {
-      const err = new Error('tags must be an array');
-      err.status = 400;
-      return next(err);
+    // } else if (toUpdate.tags) {
+    //   const err = new Error('tags must be an array');
+    //   err.status = 400;
+    //   return next(err);
     }
-  }
 
   if (toUpdate.folderId === '') {
     delete toUpdate.folderId;
     toUpdate.$unset = {folderId : 1};
   }
 
-  toUpdate.tags.forEach(tag => {
-    Tag.find({tag})
-       .then(results => {
-         if (results.userId != userId) {
-           const err = new Error('unauthorized tag');
-           err.status = 400;
-           return next(err);
-         }})
-         .catch(err => {
-           next(err);
-         });
-  });
+  // toUpdate.tags.forEach(tag => {
+  //   if (tags) {
+  //     Tag.find({tag})
+  //      .then(results => {
+  //        if (results.userId != userId) {
+  //          const err = new Error('unauthorized tag');
+  //          err.status = 400;
+  //          return next(err);
+  //        }})
+  //        .catch(err => {
+  //          next(err);
+  //        });
+  //     }
+  //        else next();
+  // });
 
-  Folder.find({ userId })
-    .then(results => {
-      const allowedFolders= results.filter(folder =>  folder.id === folderId);
-      console.log(allowedFolders);
-      if (allowedFolders.length === 0){
-        const err = new Error('Access to that folder is not authorized');
-        err.status = 401;
-        return next(err);
-     }
-    })
-    .catch(err => {
-      next(err);
-    });
-  
   const filter = ({ _id: id, userId });
   Note.findOneAndUpdate(filter, toUpdate, { new: true })
     .then(result => {
@@ -223,7 +206,7 @@ router.put('/:id', (req, res, next) => {
 router.delete('/:id', (req, res, next) => {
   const { id } = req.params;
   const userId = req.user.id;
-
+ console.log(id);
   /***** Never trust users - validate input *****/
   if (!mongoose.Types.ObjectId.isValid(id)) {
     const err = new Error('The `id` is not valid');

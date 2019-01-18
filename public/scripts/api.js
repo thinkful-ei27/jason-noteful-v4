@@ -15,6 +15,7 @@ const api = (function () {
     return $.ajax({
       type: 'GET',
       dataType: 'json',
+      headers: { 'Authorization': `Bearer ${store.authToken}`},
       url: path
     });
   };
