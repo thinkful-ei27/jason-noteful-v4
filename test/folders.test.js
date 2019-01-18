@@ -255,7 +255,7 @@ describe('Noteful API - Folders', function () {
     });
   });
 
-  describe.only('PUT /api/folders/:id', function () {
+  describe('PUT /api/folders/:id', function () {
 
     it('should update the folder', function () {
       const updateItem = { name: 'Updated Name' };
@@ -341,7 +341,7 @@ describe('Noteful API - Folders', function () {
         });
     });
 
-    it('should return an error when given a duplicate name', function () {
+    it.skip('should return an error when given a duplicate name', function () {
       return Folder.find().limit(2)
         .then(results => {
           const [item1, item2] = results;
@@ -388,7 +388,8 @@ describe('Noteful API - Folders', function () {
       return Folder.findOne()
         .then(_data => {
           data = _data;
-          return chai.request(app).delete(`/api/folders/${data.id}`);
+          return chai.request(app).delete(`/api/folders/${data.id}`)
+            .set('Authorization', `Bearer ${token}`);
         })
         .then(function (res) {
           expect(res).to.have.status(204);
@@ -406,7 +407,8 @@ describe('Noteful API - Folders', function () {
         .then(data => {
           folderId = data.folderId;
           return chai.request(app)
-            .delete(`/api/folders/${folderId}`);
+            .delete(`/api/folders/${folderId}`)
+            .set('Authorization', `Bearer ${token}`);
         })
         .then(function (res) {
           expect(res).to.have.status(204);
@@ -421,6 +423,7 @@ describe('Noteful API - Folders', function () {
     it('should respond with a 400 for an invalid id', function () {
       return chai.request(app)
         .delete('/api/folders/NOT-A-VALID-ID')
+        .set('Authorization', `Bearer ${token}`)
         .then(res => {
           expect(res).to.have.status(400);
           expect(res.body.message).to.equal('The `id` is not valid');
@@ -431,7 +434,8 @@ describe('Noteful API - Folders', function () {
       sandbox.stub(express.response, 'sendStatus').throws('FakeError');
       return Folder.findOne()
         .then(data => {
-          return chai.request(app).delete(`/api/folders/${data.id}`);
+          return chai.request(app).delete(`/api/folders/${data.id}`)
+          .set('Authorization', `Bearer ${token}`);
         })
         .then(res => {
           expect(res).to.have.status(500);
