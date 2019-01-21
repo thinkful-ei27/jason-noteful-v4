@@ -1,3 +1,10 @@
 language: node_js
 node_js: node
 services: mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: gFLkXtql4bbeXDkOkztB3AtBOMz95mVXyuHC+wab1n5mpUywJjD8BnbM1EXioXtzGpPfO/NTTjRFjz/zxD4xlKFDg5ZI5CmN80X4a39+12TpMBKV0VaGIM88IZvR4w+kM4nXA1uxGChuthC4yrP/S2cJY0A/gM5r6rTadGpnWs1fR1+SzflS2e6K3h9CGsIrvgG9bNssdwpzh4dgv4bq64gepNel+Xpnr9xo0Eoaicz6WACN/ZXw7wsmC/3rx7M21VWSdcb8C9GwGa4AfKvd6eU/r/56ElDiBOYmBoL2dTC1FJpyxqlEbK9z7D+Jb7bourHZXbtF5oBusY3JBtI+AD0d7zlPy6Z+ud/L/tVbojLdy3sybKcggnI3WOj/48T5P0F33zTO0uAW6V1FY/tYYIqO3WKTBydoFR7jmrEI3d/mzNM5YSqEgqVyQEbMYR/Ca+ay5APP9etyS59GMMlDNVN79CdDe1fvcoq85S3G2ao9KmCOr2YFpzpuoq0nOCe+Hty+VizKU3Q+GMdI8hpPko67tb7GOVooxi4rX3fr8IgTNFp52lx95FHooH0AzNMDrSjehECLoFjpzXBeMNrwiXl6W2OU0Iz3uoDS1dXGYOqDl9e36mbqrF77jpoQIIjeCNXaqunybYA6qqCmEjhOYnwmi66g1F2kVoyFZXsqhdU=
+  app: cryptic-fortress-48108
+  on:
+    repo: thinkful-ei27/noteful-app-v4
